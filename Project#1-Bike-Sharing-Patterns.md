@@ -72,3 +72,242 @@ extracted and added the corresponding weather and seasonal information. Weather 
 - cnt : count of total rental bikes including both casual and registered
 
 
+### Data Preparation
+
+#### Before implementation
+
+```python
+%matplotlib inline
+%load_ext autoreload
+%autoreload 2
+%config InlineBackend.figure_format = 'retina'
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+- **%matplotlib inline** : With this backend, the output of plotting commands is displayed inline within frontends like the Jupyter notebook, directly below the code cell that produced it. The resulting plots will then also be stored in the notebook document.
+- **numpy** : NumPy is a library for the Python programming language, adding support for large, multi-dimensional arrays and matrices, along with a large collection of high-level mathematical functions to operate on these arrays.
+- **pandas** : In computer programming, pandas is a software library written for the Python programming language for data manipulation and analysis. In particular, it offers data structures and operations for manipulating numerical tables and time series. 
+- **matplotlib.pyplot** : Matplotlib is a plotting library for the Python programming language and its numerical mathematics extension NumPy. It provides an object-oriented API for embedding plots into applications using general-purpose GUI toolkits like Tkinter, wxPython, Qt, or GTK+. 
+    - matplotlib.pyplot is a collection of command style functions that make matplotlib work like MATLAB. Each pyplot function makes some change to a figure.
+    
+#### Load and prepare the data
+A critical step in working with neural networks is preparing the data correctly. Variables on different scales make it difficult for the network to efficiently learn the correct weights. 
+
+```python
+
+data_path = 'Bike-Sharing-Dataset/hour.csv'
+rides = pd.read_csv(data_path)
+
+rides.head()
+
+```
+
+#### Checking out the Data
+
+- This dataset has the number of riders for each hour of each day from January 1 2011 to December 31 2012.
+- The number of riders is split between casual and registered, summed up in the `cnt` column. 
+- Below is a plot showing the number of bike riders over the first 10 days or so in the data set. (Some days don't have exactly 24 entries in the data set, so it's not exactly 10 days.) :
+```python
+rides[:24*10].plot(x='dteday', y='cnt')
+```
+
+#### Dummy variables
+
+Here we have some categorical variables like season, weather, month. To include these in our model, we'll need to make **binary dummy variables**. This is simple to do with Pandas thanks to get_dummies().
+
+   - The terms dummy variable and binary variable are sometimes used interchangeably. However, they are not exactly the same thing. A dummy variable is used in regression analysis to quantify categorical variables that don’t have any relationship. For example, you could code 1 as Caucasian, 2 as African American, 3 as Asian etc. If your dummy variable has only two options, like 1=Male and 2=female, then that dummy variable is also a binary variable.
+    
+```python
+
+dummy_fields = ['season', 'weathersit', 'mnth', 'hr', 'weekday']
+for each in dummy_fields:
+    dummies = pd.get_dummies(rides[each], prefix=each, drop_first=False)
+    rides = pd.concat([rides, dummies], axis=1)
+
+fields_to_drop = ['instant', 'dteday', 'season', 'weathersit', 
+                  'weekday', 'atemp', 'mnth', 'workingday', 'hr']
+data = rides.drop(fields_to_drop, axis=1)
+data.head()
+
+```
+
+#### Scaling target variables
+- To make training the network easier, we'll standardize each of the continuous variables. That is, we'll shift and scale the variables such that they have zero mean and a standard deviation of 1.
+- The scaling factors are saved so we can go backwards when we use the network for predictions.
+
+```python
+
+quant_features = ['casual', 'registered', 'cnt', 'temp', 'hum', 'windspeed']
+# Store scalings in a dictionary so we can convert back later
+scaled_features = {}
+for each in quant_features:
+    mean, std = data[each].mean(), data[each].std()
+    scaled_features[each] = [mean, std]
+    data.loc[:, each] = (data[each] - mean)/std
+
+```
+
+#### Splitting the data into training, testing, and validation sets
+
+- We'll save the data for the last approximately 21 days to use as a test set after we've trained the network. 
+- We'll use this set to make predictions and compare them with the actual number of riders.
+
+```python
+# Save data for approximately the last 21 days 
+test_data = data[-21*24:]
+
+# Now remove the test data from the data set 
+data = data[:-21*24]
+
+# Separate the data into features and targets
+target_fields = ['cnt', 'casual', 'registered']
+features, targets = data.drop(target_fields, axis=1), data[target_fields]
+test_features, test_targets = test_data.drop(target_fields, axis=1), test_data[target_fields]
+```
+
+- We'll split the data into two sets, one for training and one for validating as the network is being trained. Since this is time series data, we'll train on historical data, then try to predict on future data (the validation set).
+
+```python
+
+# Hold out the last 60 days or so of the remaining data as a validation set
+train_features, train_targets = features[:-60*24], targets[:-60*24]
+val_features, val_targets = features[-60*24:], targets[-60*24:]
+
+```
+
+### Time to build the network
+
+Below you'll build your network. We've built out the structure. 
+
+- You'll implement both the **forward pass** and **backwards pass** through the network. 
+- You'll also set the hyperparameters: the **learning rate**, the number of **hidden units**, and the number of training passes.
+
+<img width="374" alt="Screen Shot 2019-09-23 at 2 12 00 PM" src="https://user-images.githubusercontent.com/46575719/65450889-20a26c00-de0c-11e9-8975-603a2efaccdc.png">
+
+The network has two layers, a hidden layer and an output layer.
+
+- The hidden layer will use the sigmoid function for activations. 
+- The output layer has only one node and is used for the regression, the output of the node is the same as the input of the node.
+    -  That is, the activation function is 𝑓(𝑥)=𝑥 .
+    -  A function that takes the input signal and generates an output signal, but takes into account the threshold, is called an activation function.
+- We work through each layer of our network calculating the outputs for each neuron.
+- All of the outputs from one layer become inputs to the neurons on the next layer. This process is called **forward propagation**.
+
+**Forward Propagation**
+- The process in which all of the outputs from one layer become inputs to the neurons on the next layer. 
+
+**Backpropagation**
+- By using the weights to propagate signals forward from the input to the output layers in a neural network, we propagate error backwards from the output back into the network to update our weights.
+- It needs the derivative of the output activation function ( 𝑓(𝑥)=𝑥 ) for the backpropagation implementation. 
+
+
+#### Actual Process
+1. Implement the sigmoid function to use as the activation functin. Set `self.activation_function` in `__init__` to your sigmoid function.
+2. Implement the forward pass in the `train` method.
+3. Implement the backpropagation algorithm in the `train` method, including calculating the output error.
+4. Implement the forward pass in the `run` method.
+
+```python
+#############
+# In the my_answers.py file, fill out the TODO sections as specified
+#############
+
+from my_answers import NeuralNetwork
+
+```
+
+
+
+
+
+### Unit tests
+Run these unit tests to check the correctness of your network implementation. 
+
+```python
+
+
+```
+
+
+### Training the network
+Stochastic Gradient Descent (SGD) --  The idea is that for each training pass, you grab a random sample of the data instead of using the whole data set. You use many more training passes than with normal gradient descent, but each pass is much faster. This ends up training the network more efficiently.
+
+
+#### Choose the number of iterations
+This is the number of batches of samples from the training data we'll use to train the network. The more iterations you use, the better the model will fit the data. However, this process can have sharply diminishing returns and can waste computational resources if you use too many iterations. You want to find a number here where the network has a low training loss, and the validation loss is at a minimum. **The ideal number of iterations would be a level that stops shortly after the validation loss is no longer decreasing**.
+
+#### Choose the learning rate
+This scales the size of weight updates. If this is too big, the weights tend to explode and the network fails to fit the data. **Normally a good choice to start at is 0.1**; however, if you effectively divide the learning rate by n_records, try starting out with a learning rate of 1. In either case, if the network has problems fitting the data, try reducing the learning rate. Note that the lower the learning rate, the smaller the steps are in the weight updates and the longer it takes for the neural network to converge.
+
+#### Choose the number of hidden nodes
+In a model where all the weights are optimized, the more hidden nodes you have, the more accurate the predictions of the model will be. (A fully optimized model could have weights of zero, after all.) However, **the more hidden nodes you have, the harder it will be to optimize the weights of the model, and the more likely it will be that suboptimal weights will lead to overfitting**. With overfitting, the model will memorize the training data instead of learning the true pattern, and won't generalize well to unseen data. 
+<br />
+Try a few different numbers and see how it affects the performance. You can look at the losses dictionary for a metric of the network performance. **If the number of hidden units is too low, then the model won't have enough space to learn and if it is too high there are too many options for the direction that the learning can take**. The trick here is to **find the right balance** in number of hidden units you choose. You'll generally find that the best number of hidden nodes to use ends up being between the number of input and output nodes.
+
+```python
+import sys
+
+####################
+### Set the hyperparameters in you myanswers.py file ###
+####################
+
+from my_answers import iterations, learning_rate, hidden_nodes, output_nodes
+
+
+N_i = train_features.shape[1]
+network = NeuralNetwork(N_i, hidden_nodes, output_nodes, learning_rate)
+
+losses = {'train':[], 'validation':[]}
+for ii in range(iterations):
+    # Go through a random batch of 128 records from the training data set
+    batch = np.random.choice(train_features.index, size=128)
+    X, y = train_features.ix[batch].values, train_targets.ix[batch]['cnt']
+                             
+    network.train(X, y)
+    
+    # Printing out the training progress
+    train_loss = MSE(network.run(train_features).T, train_targets['cnt'].values)
+    val_loss = MSE(network.run(val_features).T, val_targets['cnt'].values)
+    sys.stdout.write("\rProgress: {:2.1f}".format(100 * ii/float(iterations)) \
+                     + "% ... Training loss: " + str(train_loss)[:5] \
+                     + " ... Validation loss: " + str(val_loss)[:5])
+    sys.stdout.flush()
+    
+    losses['train'].append(train_loss)
+    losses['validation'].append(val_loss)
+
+
+```
+
+```python
+plt.plot(losses['train'], label='Training loss')
+plt.plot(losses['validation'], label='Validation loss')
+plt.legend()
+_ = plt.ylim()
+
+```
+
+### Check out the predictions
+Use the test data to view how well your network is modeling the data.
+
+```python
+fig, ax = plt.subplots(figsize=(8,4))
+
+mean, std = scaled_features['cnt']
+predictions = network.run(test_features).T*std + mean
+ax.plot(predictions[0], label='Prediction')
+ax.plot((test_targets['cnt']*std + mean).values, label='Data')
+ax.set_xlim(right=len(predictions))
+ax.legend()
+
+dates = pd.to_datetime(rides.ix[test_data.index]['dteday'])
+dates = dates.apply(lambda d: d.strftime('%b %d'))
+ax.set_xticks(np.arange(len(dates))[12::24])
+_ = ax.set_xticklabels(dates[12::24], rotation=45)
+
+```
+
+
