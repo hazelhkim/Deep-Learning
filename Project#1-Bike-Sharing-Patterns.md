@@ -58,10 +58,10 @@ extracted and added the corresponding weather and seasonal information. Weather 
 - workingday : if day is neither weekend nor holiday is 1, otherwise is 0.
 - weathersit : 
 
-        - 1: Clear, Few clouds, Partly cloudy, Partly cloudy
-        - 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist
-        - 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds
-        - 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog
+    - 1: Clear, Few clouds, Partly cloudy, Partly cloudy
+    - 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist
+    - 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds
+    - 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog
 - temp : Normalized temperature in Celsius. The values are divided to 41 (max)
 - atemp : Normalized feeling temperature in Celsius. The values are divided to 50 (max)
 - hum : Normalized humidity. The values are divided to 100 (max)
