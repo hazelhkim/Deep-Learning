@@ -7,9 +7,9 @@ A good way to do this is with a neural network, which is exactly what I'll do.
 
 <br />
 I will implement the neural network and train it on historical data to make predictions.
-    - First, load and prepare the data. (I provided the code to prepare the data but I'll be learning how to do all this in a future lesson.)
-    - Second, train the network and view its performance as it's being trained.
-    - Finally, compare my networks predictions with actual data. If I build my network right, I should find the network does a really good job for the most part.
+    - First load and prepare the data. (I provided the code to prepare the data but I'll be learning how to do all this in a future lesson.)
+    - Second train the network and view its performance as it's being trained.
+    - Finally compare my networks predictions with actual data. If I build my network right, I should find the network does a really good job for the most part.
 
 <br />
 ### About data:
