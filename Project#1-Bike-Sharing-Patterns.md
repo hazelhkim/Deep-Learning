@@ -61,12 +61,12 @@ extracted and added the corresponding weather and seasonal information. Weather 
         - 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist
         - 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds
         - 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog
-        - temp : Normalized temperature in Celsius. The values are divided to 41 (max)
-        - atemp : Normalized feeling temperature in Celsius. The values are divided to 50 (max)
-        - hum : Normalized humidity. The values are divided to 100 (max)
-        - windspeed : Normalized wind speed. The values are divided to 67 (max)
-        - casual : count of casual users
-        - registered : count of registered users
-        - cnt : count of total rental bikes including both casual and registered
+- temp : Normalized temperature in Celsius. The values are divided to 41 (max)
+- atemp : Normalized feeling temperature in Celsius. The values are divided to 50 (max)
+- hum : Normalized humidity. The values are divided to 100 (max)
+- windspeed : Normalized wind speed. The values are divided to 67 (max)
+- casual : count of casual users
+- registered : count of registered users
+- cnt : count of total rental bikes including both casual and registered
 
 
