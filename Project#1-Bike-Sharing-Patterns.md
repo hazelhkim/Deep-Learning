@@ -1,3 +1,6 @@
+# First Neural Network
+## Bike Sharing Prediction
+
 In this project, I'll build and train my own Neural Network from scrach to predict the nubmer of bikeshare users on a given day.
 <br />
 
