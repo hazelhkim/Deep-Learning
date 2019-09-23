@@ -76,3 +76,7 @@ else:
 print(output_frame.to_string(index=False))
 
 ```
+
+### XOR Perceptron
+
+<img width="707" alt="Screen Shot 2019-09-23 at 6 38 41 PM" src="https://user-images.githubusercontent.com/46575719/65468211-61f94280-de31-11e9-937c-5ee05d9668f8.png">
