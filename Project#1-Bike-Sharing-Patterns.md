@@ -16,6 +16,7 @@ I will implement the neural network and train it on historical data to make pred
 - Third, compare my networks predictions with actual data. If I build my network right, I should find the network does a really good job for the most part.
 
 <br />
+
 ### About Data 
 
 #### Background
