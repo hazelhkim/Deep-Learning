@@ -33,6 +33,7 @@ Let's do sums instead of products. => logarithms!
 - The error function we were looking for is exactly the "cross entropy."
 
 < br/>
+
 = a connection between probabilities and error functions.
   - How likely is it that those *events* happen based on the *probabilities*?
       - If it's very likely, then we have a small cross entropy.
