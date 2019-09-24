@@ -4,9 +4,7 @@ Equivalent of the sigmoid activation function but when the problem has three or 
 
 #### Multi-Class Classification & Softmax.
 
-
-<img width="756" alt="Screen Shot 2019-09-23 at 11 23 42 PM" src="https://user-images.githubusercontent.com/46575719/65478843-3ee28900-de59-11e9-8e2d-5bb61d279cd6.png">
-
+<img width="724" alt="Screen Shot 2019-09-23 at 11 26 29 PM" src="https://user-images.githubusercontent.com/46575719/65478945-9a147b80-de59-11e9-96b7-5a9a677c9a02.png">
 
 
 ```python
