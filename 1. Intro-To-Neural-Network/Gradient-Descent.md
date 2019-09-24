@@ -60,3 +60,49 @@ plt.show()
 
 <img width="819" alt="Screen Shot 2019-09-24 at 9 55 38 AM" src="https://user-images.githubusercontent.com/46575719/65517955-8694ff00-deb1-11e9-9592-af72e976c721.png">
 
+
+#### My Original Answer
+
+```python
+
+# Implement the following functions
+
+# Activation (sigmoid) function
+def sigmoid(x):
+    return 1/ (1+ np.exp(-x))
+
+# Output (prediction) formula
+def output_formula(features, weights, bias):
+    return sigmoid(weights*features + bias)
+
+# Error (log-loss) formula
+def error_formula(y, output):
+    return -y*np.log(output) - (1-y)*np.log(1-output)
+
+# Gradient descent step
+def update_weights(x, y, weights, bias, learnrate):
+    return weights + learnrate*(y - output_formula(x, weights, bias))*x, bias - learnrate*(y - output_formula(x, weights, bias))
+```
+
+#### Actual Solution:
+
+```python
+
+# Activation (sigmoid) function
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def output_formula(features, weights, bias):
+    return sigmoid(np.dot(features, weights) + bias)
+
+def error_formula(y, output):
+    return - y*np.log(output) - (1 - y) * np.log(1-output)
+
+def update_weights(x, y, weights, bias, learnrate):
+    output = output_formula(x, weights, bias)
+    d_error = y - output
+    weights += learnrate * d_error * x
+    bias += learnrate * d_error
+    return weights, bias
+
+```
