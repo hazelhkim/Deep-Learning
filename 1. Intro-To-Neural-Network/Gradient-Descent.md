@@ -1,4 +1,4 @@
-## Gradient Descent
+# Gradient Descent
 
 <img width="634" alt="Screen Shot 2019-09-24 at 9 23 52 AM" src="https://user-images.githubusercontent.com/46575719/65515302-0a98b800-dead-11e9-8e12-8023f3d3ad98.png">
  
