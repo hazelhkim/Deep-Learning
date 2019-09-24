@@ -54,3 +54,8 @@ def cross_entropy(Y, P):
 
 <img width="530" alt="Screen Shot 2019-09-24 at 1 36 05 AM" src="https://user-images.githubusercontent.com/46575719/65484828-11540a80-de6e-11e9-8eeb-e48106f8d3d2.png">
 
+#### Multi-Class Cross-Entropy
+
+<img width="547" alt="Screen Shot 2019-09-24 at 1 35 12 AM" src="https://user-images.githubusercontent.com/46575719/65513994-6ada2a80-deaa-11e9-8c7d-0f1466e30758.png">
+
+<img width="609" alt="Screen Shot 2019-09-24 at 9 06 47 AM" src="https://user-images.githubusercontent.com/46575719/65514116-a7a62180-deaa-11e9-9c3b-c1d060a0276f.png">
