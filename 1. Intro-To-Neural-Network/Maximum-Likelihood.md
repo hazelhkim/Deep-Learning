@@ -32,7 +32,7 @@ Let's do sums instead of products. => logarithms!
 - So now our goal has changed from maximizing a probability to minimizing a cross entropy to get a better model.
 - The error function we were looking for is exactly the "cross entropy."
 
-< br/>
+<br />
 
 = a connection between probabilities and error functions.
   - How likely is it that those *events* happen based on the *probabilities*?
